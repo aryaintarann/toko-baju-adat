@@ -38,15 +38,13 @@
                                 <p class="text-xs text-gray-500">{{ $order->customer_phone }}</p>
                             </td>
                             <td class="px-5 py-3 font-medium text-gray-900">Rp
-                                {{ number_format($order->total_amount, 0, ',', '.') }}</td>
+                                {{ number_format($order->total_amount, 0, ',', '.') }}
+                            </td>
                             <td class="px-5 py-3">
-                                <span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium
-                                            {{ $order->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : '' }}
-                                            {{ $order->status === 'processing' ? 'bg-blue-100 text-blue-700' : '' }}
-                                            {{ $order->status === 'shipped' ? 'bg-purple-100 text-purple-700' : '' }}
-                                            {{ $order->status === 'completed' ? 'bg-green-100 text-green-700' : '' }}
-                                            {{ $order->status === 'cancelled' ? 'bg-red-100 text-red-700' : '' }}
-                                        ">{{ ucfirst($order->status) }}</span>
+                                <span
+                                    class="inline-block px-2.5 py-1 rounded-full text-xs font-medium {{ $order->status->color() }}">
+                                    {{ $order->status->label() }}
+                                </span>
                             </td>
                             <td class="px-5 py-3 text-gray-600">{{ $order->created_at->format('d M Y H:i') }}</td>
                             <td class="px-5 py-3 text-right">

@@ -22,7 +22,7 @@
                     </div>
                     <div>
                         <span class="text-warm-500">Status</span>
-                        <p class="font-bold text-primary-600 capitalize">{{ $order->status }}</p>
+                        <p class="font-bold text-primary-600 capitalize">{{ $order->status->label() }}</p>
                     </div>
                     <div>
                         <span class="text-warm-500">Nama</span>

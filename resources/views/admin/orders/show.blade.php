@@ -70,7 +70,8 @@
                                     <td class="px-5 py-3 text-gray-600">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
                                     <td class="px-5 py-3 text-gray-600">{{ $item->quantity }}</td>
                                     <td class="px-5 py-3 text-right font-medium text-gray-900">Rp
-                                        {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                                        {{ number_format($item->subtotal, 0, ',', '.') }}
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -78,7 +79,8 @@
                             <tr>
                                 <td colspan="3" class="px-5 py-3 text-right font-bold text-gray-900">Total</td>
                                 <td class="px-5 py-3 text-right text-lg font-bold text-primary-700">Rp
-                                    {{ number_format($order->total_amount, 0, ',', '.') }}</td>
+                                    {{ number_format($order->total_amount, 0, ',', '.') }}
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
@@ -91,13 +93,10 @@
                     <h2 class="font-semibold text-gray-900 mb-4">Status Pesanan</h2>
 
                     <div class="mb-4">
-                        <span class="inline-block px-3 py-1.5 rounded-full text-sm font-medium
-                                {{ $order->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : '' }}
-                                {{ $order->status === 'processing' ? 'bg-blue-100 text-blue-700' : '' }}
-                                {{ $order->status === 'shipped' ? 'bg-purple-100 text-purple-700' : '' }}
-                                {{ $order->status === 'completed' ? 'bg-green-100 text-green-700' : '' }}
-                                {{ $order->status === 'cancelled' ? 'bg-red-100 text-red-700' : '' }}
-                            ">{{ ucfirst($order->status) }}</span>
+                        <span
+                            class="inline-block px-3 py-1.5 rounded-full text-sm font-medium {{ $order->status->color() }}">
+                            {{ $order->status->label() }}
+                        </span>
                     </div>
 
                     <form action="{{ route('admin.orders.updateStatus', $order) }}" method="POST" class="space-y-3">
@@ -106,14 +105,11 @@
                             <label for="status" class="block text-sm font-medium text-gray-700 mb-1.5">Ubah Status</label>
                             <select name="status" id="status"
                                 class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
-                                <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="processing" {{ $order->status === 'processing' ? 'selected' : '' }}>Diproses
-                                </option>
-                                <option value="shipped" {{ $order->status === 'shipped' ? 'selected' : '' }}>Dikirim</option>
-                                <option value="completed" {{ $order->status === 'completed' ? 'selected' : '' }}>Selesai
-                                </option>
-                                <option value="cancelled" {{ $order->status === 'cancelled' ? 'selected' : '' }}>Dibatalkan
-                                </option>
+                                @foreach(\App\Enums\OrderStatus::cases() as $status)
+                                    <option value="{{ $status->value }}" {{ $order->status === $status ? 'selected' : '' }}>
+                                        {{ $status->label() }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                         <button type="submit"
