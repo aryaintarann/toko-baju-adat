@@ -1,0 +1,50 @@
+<?php
+
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Middleware\AdminMiddleware;
+use Illuminate\Support\Facades\Route;
+
+// Public Routes (No Login Required)
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
+Route::get('/catalog/{slug}', [CatalogController::class, 'show'])->name('catalog.show');
+
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::patch('/cart/update', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+
+// API Routes (for AJAX)
+Route::get('/api/regions/provinces', [App\Http\Controllers\Api\RegionController::class, 'getProvinces'])->name('api.regions.provinces');
+Route::get('/api/regions/cities', [App\Http\Controllers\Api\RegionController::class, 'getCities'])->name('api.regions.cities');
+Route::post('/api/shipping/cost', App\Http\Controllers\Api\ShippingController::class)->name('api.shipping.cost');
+
+// Admin Auth Routes
+Route::get('/admin/login', [AuthController::class, 'showLogin'])->name('admin.login');
+Route::post('/admin/login', [AuthController::class, 'login'])->name('admin.login.submit');
+Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
+
+// Admin Protected Routes
+Route::prefix('admin')->middleware(AdminMiddleware::class)->name('admin.')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::resource('products', ProductController::class)->except(['show']);
+    Route::resource('categories', CategoryController::class)->except(['show']);
+
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+});
