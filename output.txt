@@ -1,0 +1,12 @@
+Testing PascalCase JSON:
+Status: 400 Body: {"meta":{"message":"Key: 'CalculateRequestV2.Origin' Error:Field validation for 'Origin' failed on the 'required' tag\nKey: 'CalculateRequestV2.Destination' Error:Field validation for 'Destination' failed on the 'required' tag","code":400,"status":"error"},"data":null}
+
+Testing lowercase JSON:
+Status: 400 Body: {"meta":{"message":"Key: 'CalculateRequestV2.Origin' Error:Field validation for 'Origin' failed on the 'required' tag\nKey: 'CalculateRequestV2.Destination' Error:Field validation for 'Destination' failed on the 'required' tag","code":400,"status":"error"},"data":null}
+
+Testing PascalCase Form:
+Status: 400 Body: {"meta":{"message":"Key: 'CalculateRequestV2.Origin' Error:Field validation for 'Origin' failed on the 'required' tag\nKey: 'CalculateRequestV2.Destination' Error:Field validation for 'Destination' failed on the 'required' tag","code":400,"status":"error"},"data":null}
+
+Testing lowercase Form:
+Status: 200 Body: {"meta":{"message":"Success Calculate Domestic Shipping cost","code":200,"status":"success"},"data":[{"name":"Jalur Nugraha Ekakurir (JNE)","code":"jne","service":"CTC","description":"JNE City Courier","cost":9000,"etd":"1 day"},{"name":"Jalur Nugraha Ekakurir (JNE)","code":"jne","service":"JTR","description":"JNE Trucking","cost":40000,"etd":"3 day"},{"name":"Jalur Nugraha Ekakurir (JNE)","code":"jne","service":"CTCSPS","description":"JNE City Courier","cost":25000,"etd":"1 day"},{"name":"Jalur Nugraha Ekakurir (JNE)","code":"jne","service":"CTCYES","description":"JNE City Courier","cost":12000,"etd":"1 day"},{"name":"Jalur Nugraha Ekakurir (JNE)","code":"jne","service":"JTR\u003c130","description":"JNE Trucking","cost":200000,"etd":"-"},{"name":"Jalur Nugraha Ekakurir (JNE)","code":"jne","service":"JTR\u003e130","description":"JNE Trucking","cost":350000,"etd":"-"},{"name":"Jalur Nugraha Ekakurir (JNE)","code":"jne","service":"JTR\u003e200","description":"JNE Trucking","cost":500000,"etd":"-"}]}
+

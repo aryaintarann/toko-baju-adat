@@ -59,6 +59,19 @@ class OrderService
 
             $order->update(['total_amount' => $total + $order->shipping_cost]);
 
+            // Send Emails
+            try {
+                // To Admin
+                $adminEmail = env('ADMIN_EMAIL', config('mail.from.address')); // Use specific admin email or fallback
+                \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\NewOrderAdminMail($order));
+
+                // To Customer
+                \Illuminate\Support\Facades\Mail::to($order->customer_email)->send(new \App\Mail\OrderCreatedMail($order));
+            } catch (\Exception $e) {
+                // Log error but don't fail the checkout process
+                \Illuminate\Support\Facades\Log::error('Failed to send order creation emails: ' . $e->getMessage());
+            }
+
             return $order;
         });
     }

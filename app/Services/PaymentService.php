@@ -14,6 +14,15 @@ class PaymentService
         Config::$isProduction = config('services.midtrans.is_production');
         Config::$isSanitized = true;
         Config::$is3ds = true;
+
+        // Fix for local SSL issues
+        if (config('app.env') === 'local') {
+            Config::$curlOptions = [
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0,
+                CURLOPT_HTTPHEADER => [],
+            ];
+        }
     }
 
     public function getSnapToken(Order $order): string
@@ -53,6 +62,7 @@ class PaymentService
             $snapToken = Snap::getSnapToken($params);
             return $snapToken;
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Midtrans Snap Token Error: ' . $e->getMessage());
             // Fallback for development/testing if keys are not set
             if (config('app.env') === 'local') {
                 return 'dummy-snap-token-' . $order->order_number;

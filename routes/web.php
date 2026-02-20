@@ -28,9 +28,9 @@ Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.s
 Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
 
 // API Routes (for AJAX)
-Route::get('/api/regions/provinces', [App\Http\Controllers\Api\RegionController::class, 'getProvinces'])->name('api.regions.provinces');
-Route::get('/api/regions/cities', [App\Http\Controllers\Api\RegionController::class, 'getCities'])->name('api.regions.cities');
+Route::get('/api/regions/search', [App\Http\Controllers\Api\RegionController::class, 'search'])->name('api.regions.search');
 Route::post('/api/shipping/cost', App\Http\Controllers\Api\ShippingController::class)->name('api.shipping.cost');
+Route::post('/api/payment/notification', [App\Http\Controllers\Api\PaymentCallbackController::class, 'handle'])->name('api.payment.notification');
 
 // Admin Auth Routes
 Route::get('/admin/login', [AuthController::class, 'showLogin'])->name('admin.login');

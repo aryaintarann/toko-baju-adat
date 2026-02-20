@@ -15,14 +15,13 @@ class RegionController extends Controller
         $this->shippingService = $shippingService;
     }
 
-    public function getProvinces()
+    public function search(Request $request)
     {
-        return response()->json($this->shippingService->getProvinces());
-    }
+        $query = $request->query('q');
+        if (!$query) {
+            return response()->json([]);
+        }
 
-    public function getCities(Request $request)
-    {
-        $provinceId = $request->input('province_id');
-        return response()->json($this->shippingService->getCities($provinceId));
+        return response()->json($this->shippingService->searchDestination($query));
     }
 }

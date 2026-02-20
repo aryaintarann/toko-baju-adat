@@ -64,26 +64,22 @@
                                 @enderror
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div>
-                                    <label for="province_id" class="block text-sm font-medium text-warm-700 mb-1.5">Provinsi
-                                        <span class="text-accent-500">*</span></label>
-                                    <select name="province_id" id="province_id" required
-                                        class="w-full bg-warm-50 border border-warm-200 rounded-xl px-4 py-3 text-warm-900 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all">
-                                        <option value="">Pilih Provinsi</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="city_id"
-                                        class="block text-sm font-medium text-warm-700 mb-1.5">Kota/Kabupaten <span
-                                            class="text-accent-500">*</span></label>
-                                    <select name="city_id" id="city_id" required disabled
-                                        class="w-full bg-warm-50 border border-warm-200 rounded-xl px-4 py-3 text-warm-900 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all disabled:opacity-50">
-                                        <option value="">Pilih Kota</option>
-                                    </select>
-                                </div>
+                            {{-- Destination Search --}}
+                            <div class="relative">
+                                <label for="destination_search" class="block text-sm font-medium text-warm-700 mb-1.5">Cari Kecamatan/Kota <span class="text-accent-500">*</span></label>
+                                <input type="text" id="destination_search"
+                                    class="w-full bg-warm-50 border border-warm-200 rounded-xl px-4 py-3 text-warm-900 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                                    placeholder="Ketik nama kecamatan atau kota..." autocomplete="off">
+                                <input type="hidden" name="destination_id" id="destination_id" required>
+                                
+                                {{-- Results Dropdown --}}
+                                <ul id="destination_results" 
+                                    class="absolute z-10 w-full bg-white border border-warm-200 rounded-xl shadow-lg mt-1 max-h-60 overflow-y-auto hidden">
+                                </ul>
+                                <p id="search_loading" class="text-xs text-warm-500 mt-1 hidden">Mencari...</p>
                             </div>
 
+                            {{-- Courier Selection --}}
                             <div>
                                 <label for="courier" class="block text-sm font-medium text-warm-700 mb-1.5">Kurir Pengiriman
                                     <span class="text-accent-500">*</span></label>
@@ -93,6 +89,8 @@
                                     <option value="jne">JNE</option>
                                     <option value="pos">POS Indonesia</option>
                                     <option value="tiki">TIKI</option>
+                                    <option value="sicepat">SiCepat</option>
+                                    <option value="jnt">J&T</option>
                                 </select>
                             </div>
 
@@ -172,8 +170,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const provinceSelect = document.getElementById('province_id');
-            const citySelect = document.getElementById('city_id');
+            const destinationSearch = document.getElementById('destination_search');
+            const destinationId = document.getElementById('destination_id');
+            const destinationResults = document.getElementById('destination_results');
+            const searchLoading = document.getElementById('search_loading');
             const courierSelect = document.getElementById('courier');
             const shippingServicesContainer = document.getElementById('shipping_services_container');
             const shippingServices = document.getElementById('shipping_services');
@@ -182,61 +182,83 @@
             const shippingCostDisplay = document.getElementById('shipping_cost_display');
             const totalDisplay = document.getElementById('total_display');
             const baseTotal = {{ $total }};
+            let debounceTimer;
 
-            // Fetch Provinces
-            fetch('{{ route("api.regions.provinces") }}')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        data.forEach(province => {
-                            const option = document.createElement('option');
-                            option.value = province.province_id;
-                            option.textContent = province.province;
-                            provinceSelect.appendChild(option);
-                        });
-                    }
-                });
-
-            // On Province Change
-            provinceSelect.addEventListener('change', function () {
-                citySelect.innerHTML = '<option value="">Pilih Kota</option>';
-                citySelect.disabled = true;
-                courierSelect.disabled = true;
-                shippingServicesContainer.classList.add('hidden');
-                resetShipping();
-
-                if (this.value) {
-                    fetch(`{{ route("api.regions.cities") }}?province_id=${this.value}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.length > 0) {
-                                citySelect.disabled = false;
-                                data.forEach(city => {
-                                    const option = document.createElement('option');
-                                    option.value = city.city_id;
-                                    option.textContent = `${city.type} ${city.city_name}`;
-                                    citySelect.appendChild(option);
-                                });
-                            }
-                        });
+            // Debounce Function
+            function debounce(func, delay) {
+                return function() {
+                    const context = this;
+                    const args = arguments;
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => func.apply(context, args), delay);
                 }
-            });
+            }
 
-            // On City Change
-            citySelect.addEventListener('change', function () {
-                courierSelect.disabled = !this.value;
-                if (!this.value) {
-                    resetShipping();
-                } else {
-                    if (courierSelect.value) {
-                        calculateShipping();
-                    }
+            // Perform Search
+            function performSearch(query) {
+                if (query.length < 3) {
+                    destinationResults.classList.add('hidden');
+                    return;
+                }
+
+                searchLoading.classList.remove('hidden');
+                destinationResults.classList.add('hidden');
+
+                fetch(`{{ route("api.regions.search") }}?q=${query}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        searchLoading.classList.add('hidden');
+                        destinationResults.innerHTML = '';
+                        
+                        if (data.length > 0) {
+                            destinationResults.classList.remove('hidden');
+                            data.forEach(item => {
+                                const li = document.createElement('li');
+                                li.className = 'px-4 py-2 hover:bg-warm-50 cursor-pointer text-sm text-warm-700 border-b border-warm-50 last:border-0';
+                                // Komerce API structure: label usually contains full string
+                                // Or construct from subdistrict_name, city_name, province_name
+                                const label = item.label || `${item.subdistrict_name}, ${item.city_name}, ${item.province_name}`;
+                                li.textContent = label;
+                                li.onclick = () => selectDestination(item.id, label);
+                                destinationResults.appendChild(li);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        searchLoading.classList.add('hidden');
+                        console.error('Search error:', error);
+                    });
+            }
+
+            // Select Destination
+            function selectDestination(id, label) {
+                destinationId.value = id;
+                destinationSearch.value = label;
+                destinationResults.classList.add('hidden');
+                courierSelect.disabled = false;
+                
+                // Reset shipping if destination changed
+                resetShipping();
+                if (courierSelect.value) {
+                    calculateShipping();
+                }
+            }
+
+            // Input Event Listener
+            destinationSearch.addEventListener('input', debounce(function(e) {
+                performSearch(e.target.value);
+            }, 500));
+
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!destinationSearch.contains(e.target) && !destinationResults.contains(e.target)) {
+                    destinationResults.classList.add('hidden');
                 }
             });
 
             // On Courier Change
             courierSelect.addEventListener('change', function () {
-                if (this.value && citySelect.value) {
+                if (this.value && destinationId.value) {
                     calculateShipping();
                 } else {
                     shippingServicesContainer.classList.add('hidden');
@@ -255,26 +277,32 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
-                        destination: citySelect.value,
+                        destination: destinationId.value,
                         courier: courierSelect.value
                     })
                 })
                     .then(response => response.json())
                     .then(data => {
                         shippingServices.innerHTML = '';
-                        if (data.length > 0) {
+                        // Komerce structure? ShippingService returns costs array.
+                        // Assuming ShippingService returns standard array of costs.
+                        if (data && data.length > 0) {
                             data.forEach((service, index) => {
                                 const cost = service.cost[0].value;
-                                const etd = service.cost[0].etd;
+                                const etd = service.cost[0].etd; // Komerce might use 'etd' or 'estimated_days'
                                 const formattedCost = new Intl.NumberFormat('id-ID').format(cost);
+                                
+                                // Normalize service name
+                                const serviceName = service.service; // e.g. "REG", "OKE"
+                                const description = service.description || serviceName;
 
                                 const div = document.createElement('div');
                                 div.className = 'flex items-center p-3 border border-warm-200 rounded-lg cursor-pointer hover:border-primary-500 transition-colors';
                                 div.innerHTML = `
                                     <input type="radio" name="shipping_option" id="service_${index}" value="${cost}" 
-                                        class="text-primary-600 focus:ring-primary-500" onchange="updateTotal(${cost}, '${service.service}')">
+                                        class="text-primary-600 focus:ring-primary-500" onchange="updateTotal(${cost}, '${serviceName}')">
                                     <label for="service_${index}" class="ml-3 flex-1 flex justify-between cursor-pointer">
-                                        <span class="block text-sm font-medium text-warm-900">${service.service} (${service.description})</span>
+                                        <span class="block text-sm font-medium text-warm-900">${serviceName} (${description})</span>
                                         <span class="block text-sm text-warm-500">Rp ${formattedCost} <span class="text-xs text-warm-400">(${etd} hari)</span></span>
                                     </label>
                                 `;
@@ -303,6 +331,8 @@
                 shippingCostDisplay.textContent = 'Rp 0';
                 totalDisplay.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(baseTotal);
                 shippingServicesContainer.classList.add('hidden');
+                // Uncheck radios
+                document.querySelectorAll('input[name="shipping_option"]').forEach(el => el.checked = false);
             }
         });
     </script>

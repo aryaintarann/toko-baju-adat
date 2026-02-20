@@ -62,9 +62,40 @@ class CheckoutController extends Controller
         }
     }
 
-    public function success($orderId, \App\Services\PaymentService $paymentService)
+    public function success(Request $request, $orderId, \App\Services\PaymentService $paymentService)
     {
         $order = Order::with('items')->findOrFail($orderId);
+
+        // Handle Midtrans redirect parameters (fallback for local testing without webhook)
+        if ($request->has('transaction_status') && $request->has('order_id')) {
+            $transactionStatus = $request->query('transaction_status');
+            $redirectOrderId = $request->query('order_id');
+
+            if ($redirectOrderId === $order->order_number) {
+                if ($transactionStatus == 'settlement' || $transactionStatus == 'capture') {
+                    $order->update([
+                        'status' => \App\Enums\OrderStatus::Processing,
+                        'payment_status' => 'paid'
+                    ]);
+
+                    try {
+                        \Illuminate\Support\Facades\Mail::to($order->customer_email)->send(new \App\Mail\OrderPaidMail($order));
+                    } catch (\Exception $e) {
+                        \Illuminate\Support\Facades\Log::error('Failed to send OrderPaidMail: ' . $e->getMessage());
+                    }
+                } else if ($transactionStatus == 'pending') {
+                    $order->update([
+                        'status' => \App\Enums\OrderStatus::Pending,
+                        'payment_status' => 'pending'
+                    ]);
+                } else if (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
+                    $order->update([
+                        'status' => \App\Enums\OrderStatus::Cancelled,
+                        'payment_status' => $transactionStatus
+                    ]);
+                }
+            }
+        }
 
         if ($order->status === \App\Enums\OrderStatus::Pending && !$order->snap_token) {
             $order->snap_token = $paymentService->getSnapToken($order);

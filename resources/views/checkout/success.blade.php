@@ -97,10 +97,10 @@
             document.getElementById('pay-button').onclick = function () {
                 snap.pay('{{ $order->snap_token }}', {
                     onSuccess: function (result) {
-                        window.location.reload();
+                        window.location.href = "{{ route('checkout.success', $order->id) }}?order_id={{ $order->order_number }}&transaction_status=" + result.transaction_status;
                     },
                     onPending: function (result) {
-                        window.location.reload();
+                        window.location.href = "{{ route('checkout.success', $order->id) }}?order_id={{ $order->order_number }}&transaction_status=" + result.transaction_status;
                     },
                     onError: function (result) {
                         alert("Pembayaran gagal!");

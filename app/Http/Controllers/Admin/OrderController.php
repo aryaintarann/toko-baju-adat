@@ -35,6 +35,12 @@ class OrderController extends Controller
 
         $order->update(['status' => $request->status]);
 
+        try {
+            \Illuminate\Support\Facades\Mail::to($order->customer_email)->send(new \App\Mail\OrderStatusUpdatedMail($order));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send OrderStatusUpdatedMail: ' . $e->getMessage());
+        }
+
         return redirect()->back()->with('success', 'Status pesanan berhasil diperbarui!');
     }
 }
