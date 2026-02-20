@@ -37,6 +37,10 @@ Route::get('/refund-policy', [\App\Http\Controllers\RefundController::class, 'po
 Route::get('/refund', [\App\Http\Controllers\RefundController::class, 'create'])->name('refund.create');
 Route::post('/refund', [\App\Http\Controllers\RefundController::class, 'store'])->name('refund.store');
 
+// Track Order Routes
+Route::get('/cek-pesanan', [\App\Http\Controllers\OrderTrackingController::class, 'index'])->name('tracking.index');
+Route::post('/cek-pesanan', [\App\Http\Controllers\OrderTrackingController::class, 'track'])->name('tracking.track');
+
 // Admin Auth Routes
 Route::get('/admin/login', [AuthController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [AuthController::class, 'login'])->name('admin.login.submit');
