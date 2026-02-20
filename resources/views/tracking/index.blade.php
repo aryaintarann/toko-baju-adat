@@ -82,12 +82,12 @@
                                 @if($order->shipping_cost)
                                 <div class="flex justify-between mb-2">
                                     <span class="text-neutral-600">Ongkos Kirim</span>
-                                    <span class="font-medium text-neutral-900">Rp {{ number_format((float)$order->shipping_cost, 0, ',', '.') }}</span>
+                                    <span class="font-medium text-neutral-900">Rp {{ number_format((float)($order->shipping_cost ?? 0), 0, ',', '.') }}</span>
                                 </div>
                                 @endif
                                 <div class="flex justify-between pt-3 mt-3 border-t border-neutral-100">
                                     <span class="font-semibold text-neutral-900">Total Belanja</span>
-                                    <span class="font-bold text-amber-800 text-lg">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
+                                    <span class="font-bold text-amber-800 text-lg">Rp {{ number_format((float)$order->total_amount, 0, ',', '.') }}</span>
                                 </div>
                             </div>
                         </div>
