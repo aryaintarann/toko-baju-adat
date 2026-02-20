@@ -48,6 +48,9 @@
                         class="text-warm-700 hover:text-primary-600 font-medium transition-colors {{ request()->routeIs('home') ? 'text-primary-600' : '' }}">Beranda</a>
                     <a href="{{ route('catalog.index') }}"
                         class="text-warm-700 hover:text-primary-600 font-medium transition-colors {{ request()->routeIs('catalog.*') ? 'text-primary-600' : '' }}">Katalog</a>
+                    <a href="{{ route('tracking.index') }}"
+                        class="text-warm-700 hover:text-primary-600 font-medium transition-colors {{ request()->routeIs('tracking.*') ? 'text-primary-600' : '' }}">Cek
+                        Pesanan</a>
                     <a href="{{ route('refund.policy') }}"
                         class="text-warm-700 hover:text-primary-600 font-medium transition-colors {{ request()->routeIs('refund.*') ? 'text-primary-600' : '' }}">Refund</a>
                     <a href="{{ route('cart.index') }}" class="relative group">
@@ -92,11 +95,13 @@
             </div>
 
             {{-- Mobile Dropdown --}}
-            <div id="mobile-menu" class="md:hidden hidden pb-4 border-t border-primary-100">
+            <div id="mobile-menu" class="md:hidden hidden pb-4 border-t border-primary-100 px-4">
                 <a href="{{ route('home') }}"
                     class="block py-3 text-warm-700 hover:text-primary-600 font-medium">Beranda</a>
                 <a href="{{ route('catalog.index') }}"
                     class="block py-3 text-warm-700 hover:text-primary-600 font-medium">Katalog</a>
+                <a href="{{ route('tracking.index') }}"
+                    class="block py-3 text-warm-700 hover:text-primary-600 font-medium">Cek Pesanan</a>
                 <a href="{{ route('refund.policy') }}"
                     class="block py-3 text-warm-700 hover:text-primary-600 font-medium">Refund</a>
             </div>
@@ -149,6 +154,9 @@
                                 class="text-warm-400 hover:text-primary-400 transition-colors">Beranda</a></li>
                         <li><a href="{{ route('catalog.index') }}"
                                 class="text-warm-400 hover:text-primary-400 transition-colors">Katalog</a></li>
+                        <li><a href="{{ route('tracking.index') }}"
+                                class="text-warm-400 hover:text-primary-400 transition-colors">Cek Status Pesanan</a>
+                        </li>
                         <li><a href="{{ route('cart.index') }}"
                                 class="text-warm-400 hover:text-primary-400 transition-colors">Keranjang</a></li>
                         <li><a href="{{ route('refund.policy') }}"
