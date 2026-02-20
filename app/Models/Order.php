@@ -48,6 +48,11 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function refund(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Refund::class);
+    }
+
     public function getFormattedTotalAttribute(): string
     {
         return 'Rp ' . number_format($this->total_amount, 0, ',', '.');

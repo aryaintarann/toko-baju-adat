@@ -77,6 +77,9 @@
             @if($order->status === \App\Enums\OrderStatus::Shipped)
                 <p style="margin-top: 20px;">Pesanan Anda telah diserahkan ke kurir ({{ strtoupper($order->courier) }}).
                     Harap menunggu kedatangan paket Anda.</p>
+            @elseif($order->status === \App\Enums\OrderStatus::Refunded)
+                <p style="margin-top: 20px;">Dana pesanan Anda sedang dalam proses pengembalian (Refund) karena permintaan
+                    Anda telah disetujui. Silakan cek email terpisah terkait detail pengembalian dana.</p>
             @endif
 
             <p style="margin-top: 30px;">

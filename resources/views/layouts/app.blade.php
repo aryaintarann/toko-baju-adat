@@ -48,6 +48,8 @@
                         class="text-warm-700 hover:text-primary-600 font-medium transition-colors {{ request()->routeIs('home') ? 'text-primary-600' : '' }}">Beranda</a>
                     <a href="{{ route('catalog.index') }}"
                         class="text-warm-700 hover:text-primary-600 font-medium transition-colors {{ request()->routeIs('catalog.*') ? 'text-primary-600' : '' }}">Katalog</a>
+                    <a href="{{ route('refund.policy') }}"
+                        class="text-warm-700 hover:text-primary-600 font-medium transition-colors {{ request()->routeIs('refund.*') ? 'text-primary-600' : '' }}">Refund</a>
                     <a href="{{ route('cart.index') }}" class="relative group">
                         <div
                             class="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg hover:shadow-primary-500/40">
@@ -95,6 +97,8 @@
                     class="block py-3 text-warm-700 hover:text-primary-600 font-medium">Beranda</a>
                 <a href="{{ route('catalog.index') }}"
                     class="block py-3 text-warm-700 hover:text-primary-600 font-medium">Katalog</a>
+                <a href="{{ route('refund.policy') }}"
+                    class="block py-3 text-warm-700 hover:text-primary-600 font-medium">Refund</a>
             </div>
         </div>
     </nav>
@@ -147,6 +151,9 @@
                                 class="text-warm-400 hover:text-primary-400 transition-colors">Katalog</a></li>
                         <li><a href="{{ route('cart.index') }}"
                                 class="text-warm-400 hover:text-primary-400 transition-colors">Keranjang</a></li>
+                        <li><a href="{{ route('refund.policy') }}"
+                                class="text-warm-400 hover:text-primary-400 transition-colors">Kebijakan Pengembalian
+                                Dana</a></li>
                     </ul>
                 </div>
                 <div>

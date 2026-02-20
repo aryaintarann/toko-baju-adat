@@ -32,6 +32,11 @@ Route::get('/api/regions/search', [App\Http\Controllers\Api\RegionController::cl
 Route::post('/api/shipping/cost', App\Http\Controllers\Api\ShippingController::class)->name('api.shipping.cost');
 Route::post('/api/payment/notification', [App\Http\Controllers\Api\PaymentCallbackController::class, 'handle'])->name('api.payment.notification');
 
+// Refund Routes
+Route::get('/refund-policy', [\App\Http\Controllers\RefundController::class, 'policy'])->name('refund.policy');
+Route::get('/refund', [\App\Http\Controllers\RefundController::class, 'create'])->name('refund.create');
+Route::post('/refund', [\App\Http\Controllers\RefundController::class, 'store'])->name('refund.store');
+
 // Admin Auth Routes
 Route::get('/admin/login', [AuthController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [AuthController::class, 'login'])->name('admin.login.submit');
@@ -47,4 +52,7 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->name('admin.')->grou
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+
+    Route::get('/refunds', [\App\Http\Controllers\Admin\RefundController::class, 'index'])->name('refunds.index');
+    Route::post('/refunds/{refund}/process', [\App\Http\Controllers\Admin\RefundController::class, 'process'])->name('refunds.process');
 });
