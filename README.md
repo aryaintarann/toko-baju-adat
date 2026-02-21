@@ -1,59 +1,101 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Toko Baju Adat - E-Commerce Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Toko Baju Adat adalah platform e-commerce yang dibangun menggunakan framework [Laravel 12](https://laravel.com/) untuk backend dan [Tailwind CSS v4](https://tailwindcss.com/) untuk styling frontend. Platform ini menyediakan berbagai fitur lengkap mulai dari katalog produk, keranjang belanja, proses checkout, integrasi pembayaran, hingga panel admin untuk mengelola toko.
 
-## About Laravel
+## 🚀 Fitur Utama
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 🛍️ Public Storefront (Pengguna)
+- **Katalog Produk:** Menampilkan daftar pakaian adat beserta rincian dan stok.
+- **Keranjang Belanja:** Menambah, mengubah kuantitas, dan menghapus item dari keranjang.
+- **Checkout:** Proses pemesanan dengan perhitungan total biaya secara dinamis.
+- **Integrasi Kurir / Pengiriman:** Pencarian wilayah dan pengecekan tarif ongkos kirim secara otomatis via API.
+- **Integrasi Pembayaran (Midtrans):** Pembayaran aman dan otomatis menggunakan gateway pembayaran Midtrans.
+- **Lacak Pesanan:** Fitur untuk pelanggan mengecek status pesanan mereka secara real-time.
+- **Sistem Refund / Pengembalian:** Memungkinkan pelanggan untuk mengajukan pengembalian dana berdasarkan kebijakan toko.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 🛡️ Admin Dashboard (Pengelola)
+- **Otentikasi Admin:** Sistem login terpisah khusus untuk pengelola sistem.
+- **Manajemen Produk:** Tambah, edit, dan hapus data produk pakaian adat.
+- **Manajemen Kategori:** Pengelompokan produk ke dalam berbagai kategori.
+- **Manajemen Pesanan (Orders):** Melihat daftar pesanan masuk dan mengubah status pemesanan.
+- **Manajemen Refund:** Meninjau dan memproses permintaan pengembalian dana dari pelanggan.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 💻 Tech Stack
+- **Backend:** PHP 8.2, Laravel 12.x
+- **Frontend / Styling:** Vite, Tailwind CSS 4.x
+- **Payment Gateway:** Midtrans (`midtrans/midtrans-php` package)
+- **Database:** MySQL / SQLite / PostgreSQL (Disesuaikan di konfigurasi `.env`)
 
-## Learning Laravel
+## 🛠️ Instalasi & Persiapan
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Berikut adalah langkah-langkah untuk menjalankan aplikasi ini di environment lokal / pengembangan Anda:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. **Clone repositori**
+   ```bash
+   git clone <url-repo-anda>
+   cd toko-baju-adat
+   ```
 
-## Laravel Sponsors
+2. **Install dependensi PHP dan Node.js**
+   ```bash
+   composer install
+   npm install
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+3. **Duplikat file konfigurasi environment**
+   ```bash
+   cp .env.example .env
+   ```
+   *Atau jika Anda menggunakan Windows CMD/PowerShell:*
+   ```bash
+   copy .env.example .env
+   ```
 
-### Premium Partners
+4. **Konfigurasi file `.env`**
+   Buka file `.env` di text editor pilihan Anda dan pastikan untuk mengisi / menyesuaikan kredensial berikut:
+   - Koneksi Database (`DB_CONNECTION`, `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`)
+   - Kunci API Midtrans (seperti `MIDTRANS_SERVER_KEY`, dsb. jika ada)
+   - Kunci API Kurir/Pengiriman
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+5. **Generate Application Key**
+   ```bash
+   php artisan key:generate
+   ```
 
-## Contributing
+6. **Jalankan Migrasi Database (dan Seeder jika ada)**
+   ```bash
+   php artisan migrate
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+7. **Kompilasi Asset Frontend**
+   ```bash
+   # Untuk development dengan hot-reload
+   npm run dev
 
-## Code of Conduct
+   # Atau untuk production build
+   npm run build
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+8. **Jalankan Development Server**
+   Pastikan membuka terminal baru atau biarkan proses Vite/npm berjalan, lalu jalankan:
+   ```bash
+   php artisan serve
+   ```
+   Selamat! Aplikasi sekarang dapat diakses melalui `http://localhost:8000`.
 
-## Security Vulnerabilities
+## 📂 Struktur Penting (Routing)
+- `routes/web.php` : Mendefinisikan rute untuk halaman utama (public), checkout, sistem tracking, dan rute panel `/admin`.
+- `routes/api.php` : API untuk Notifikasi callback Midtrans dan perhitungan biaya pengiriman/kurir.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🤝 Kontribusi
+Jika ingin berkontribusi dalam pengembangan aplikasi ini:
+1. Fork repository
+2. Buat branch fitur Anda (`git checkout -b feature/FiturBaru`)
+3. Commit perubahan Anda (`git commit -m 'Menambahkan FiturBaru'`)
+4. Push ke branch referensi (`git push origin feature/FiturBaru`)
+5. Buat Pull Request baru
 
-## License
+## 📜 Lisensi
+Lisensi aplikasi ini bersifat terbuka dan mengikuti pedoman [MIT license](https://opensource.org/licenses/MIT) sebagaimana direkomendasikan oleh Laravel.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
